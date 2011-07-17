@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Vash" default="dist">
+
+	<property name="version" value="1.0.1"/>
+	<property name="src" value="src"/>
+	<property name="build" value="bin"/>
+	<property name="dist" value="dist"/>
+	<property name="doc" value="doc"/>
+	<property name="license" value="LICENSE"/>
+	<property name="readme" value="README.md"/>
+	<property name="jar" value="Vash.jar"/>
+
+	<target name="doc">
+		<javadoc
+			destdir="${doc}"
+			access="public"
+			author="true"
+           	version="true"
+           	use="true"
+           	overview="${src}/overview.html"
+           	breakiterator="yes"          
+           	windowtitle="Vash Documentation"
+           	linksource="yes"
+		>
+		<packageset dir="${src}">
+			<include name="vash/"/>
+		</packageset>
+		
+		</javadoc>
+	</target>
+
+	<target name="jar">
+		<jar destfile="${jar}" manifest="${src}/manifest.mf">
+			<fileset dir="${build}" defaultexcludes="yes">
+				<include name="vash/"/>
+				<include name="ec/"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="dist" depends="jar,doc">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="vash-${version}"/>
+
+		<fileset id="dir.version" dir="${basedir}">
+			<include name="vash-${version}/"/>
+		</fileset>
+		
+		<copy todir="vash-${version}">
+			<fileset dir="${basedir}">
+				<include name="${doc}/"/>
+				<include name="${src}/"/>
+				<include name="${readme}"/>
+				<include name="${license}"/>
+				<include name="${jar}"/>
+			</fileset>
+		</copy>
+		
+		<tar destfile="${dist}/vash-${version}.tar.gz" compression="gzip">
+			<fileset refid="dir.version"/>
+		</tar>
+		<tar destfile="${dist}/vash-${version}.tar.bz2" compression="bzip2">
+			<fileset refid="dir.version"/>
+		</tar>
+		<zip destfile="${dist}/vash-${version}.zip" level="9">
+			<fileset refid="dir.version"/>
+		</zip>
+		<delete dir="vash-${version}"/>
+	</target>
+	
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${basedir}">
+				<include name="test/diff/**/*"/>
+				<include name="test/result/**/*"/>
+				<include name="gallery/*.*"/>
+				<include name="gallery/trees/**/*"/>
+				<include name="*.jar"/>
+				<include name="${dist}/"/>
+				<include name="${doc}/"/>
+			</fileset>
+		</delete>
+	</target>
+
+</project>
